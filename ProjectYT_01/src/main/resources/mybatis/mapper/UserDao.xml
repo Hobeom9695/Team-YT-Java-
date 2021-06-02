@@ -15,9 +15,9 @@
 	
 	<insert id="join" parameterType="java.util.HashMap">
 		insert into user_yt (user_num, id, password, user_name,
-                     		 user_telnum, nickname, email, company, grade)
+                     		 user_telnum, nickname, email, company, authority, enabled)
 			values (user_yt_seq.nextval, #{item1}, #{item2}, #{item3},
-					#{item4}, #{item5}, #{item6}, #{item7}, 'normal')
+					#{item4}, #{item5}, #{item6}, #{item7}, 'normal', 1)
 	</insert>
 	
 	<delete id="userDeleteDao">
