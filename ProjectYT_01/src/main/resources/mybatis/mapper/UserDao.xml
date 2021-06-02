@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.study.springboot.dao.ItUserDao">
+
+	<select id="userListDao" resultType="com.study.springboot.dto.UserDto">
+		select * from simple_bbs order by id desc
+	</select>
+	
+	<select id="userViewDao" resultType="com.study.springboot.dto.UserDto">
+		select * from simple_bbs where id = #{0}
+	</select>
+	
+	<insert id="join" parameterType="java.util.HashMap">
+		insert into user_yt (user_num, id, password, user_name,
+                     		 user_telnum, nickname, email, company, grade)
+			values (user_yt_seq.nextval, #{item1}, #{item2}, #{item3},
+					#{item4}, #{item5}, #{item6}, #{item7}, 'normal')
+	</insert>
+	
+	<delete id="userDeleteDao">
+		delete from simple_bbs where id = #{_id}
+	</delete>
+	
+	<select id="articleCount" resultType="_int">
+		select count(*) from simple_bbs
+	</select>
+	
+</mapper>
