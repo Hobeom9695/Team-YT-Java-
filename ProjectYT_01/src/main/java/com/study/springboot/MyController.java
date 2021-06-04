@@ -4,14 +4,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.study.springboot.dto.UserDto;
 import com.study.springboot.service.ItProjectService;
 
 @Controller
@@ -22,7 +27,7 @@ public class MyController {
 	
 	@RequestMapping("/")
 	public String root() throws Exception {
-		return "security/loginForm";
+		return "guest/main1";
 	}
 	
 	@RequestMapping("/security/joinForm")
@@ -31,26 +36,62 @@ public class MyController {
 	}
 	
 	@RequestMapping("/security/join")
-	public @ResponseBody String join(HttpServletRequest request, Model model) {
+	public @ResponseBody String join(HttpServletRequest request, Model model,
+									 @ModelAttribute("dto") @Valid UserDto userDto,
+									 BindingResult result)
+	{
+		String page = "joinForm";
 		
-		String userId = request.getParameter("userid");
-		String userName = request.getParameter("user_name");
-		String userPassword = request.getParameter("password");
-		String telNum = request.getParameter("user_telNum");
-		String nickName = request.getParameter("nickname");
-		String eMailId = request.getParameter("eMail_id");
-		String eMailUrl = request.getParameter("eMail_url");
-		String company = request.getParameter("company");
-		userPassword = new BCryptPasswordEncoder().encode(userPassword);
+		if(result.hasErrors()) {
+			System.out.println("getAllErrors : " + result.getAllErrors());
+			
+			if(result.getFieldError("userId") != null) {
+				System.out.println("1:" + result.getFieldError("userId").getCode());
+			}
+			if(result.getFieldError("userPwd") != null) {
+				System.out.println("2:" + result.getFieldError("userPwd").getCode());
+			}
+			if(result.getFieldError("userName") != null) {
+				System.out.println("3:" + result.getFieldError("userName").getCode());
+			}
+			if(result.getFieldError("userTelNum") != null) {
+				System.out.println("4:" + result.getFieldError("userTelNum").getCode());
+			}
+			if(result.getFieldError("nickName") != null) {
+				System.out.println("5:" + result.getFieldError("nickName").getCode());
+			}
+			if(result.getFieldError("eMail_id") != null) {
+				System.out.println("6:" + result.getFieldError("eMail_id").getCode());
+			}
+			if(result.getFieldError("eMail_url") != null) {
+				System.out.println("7:" + result.getFieldError("eMail_url").getCode());
+			}
+			
+			return page;
+		}
+		
+		userDto.setUserId(request.getParameter("userId"));
+		userDto.setUserPwd(request.getParameter("userPwd"));
+		userDto.setUserName(request.getParameter("userName"));
+		userDto.setUserTelNum(request.getParameter("userTelNum"));
+		userDto.setNickName(request.getParameter("nickName"));
+		userDto.setEMail_id(request.getParameter("eMail_id"));
+		userDto.setEMail_url(request.getParameter("eMail_url"));
+		userDto.setEMail(userDto.getEMail_id()+"@"+userDto.getEMail_url());
+		userDto.setCompany(request.getParameter("company"));
+		
+		String password = userDto.getUserPwd();
+		
+		password = new BCryptPasswordEncoder().encode(password);
 		
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("item1", userId);
-		map.put("item2", userPassword);
-		map.put("item3", userName);
-		map.put("item4", telNum);
-		map.put("item5", nickName);
-		map.put("item6", eMailId+"@"+eMailUrl);
-		map.put("item7", company);
+		map.put("item1", userDto.getUserId());
+		map.put("item2", password);
+		map.put("item3", userDto.getUserName());
+		map.put("item4", userDto.getUserTelNum());
+		map.put("item5", userDto.getNickName());
+		map.put("item6", userDto.getEMail());
+		map.put("item7", userDto.getCompany());
 		
 		int nResult = svc.join(map);
 		System.out.println("join : " + nResult);
@@ -64,6 +105,51 @@ public class MyController {
 		
 		return json;
 	}
+	
+	@RequestMapping("/security/checkId" )
+	public @ResponseBody String checkId(HttpServletRequest request) {
+		String userId = request.getParameter("userId");
+		System.out.println("userid="+userId);
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("item1", userId);
+		
+		int nResult = svc.checkid(map);
+		
+		System.out.println("["+nResult+"]");
+		
+		String json = "";
+		
+		if(nResult != 0) {//결과 값이 있으면 아이디 존재	
+			json = "{\"code\":\"fail\", \"desc\":\"해당 아이디가 이미 존재합니다.\"}";
+		} else {		//없으면 아이디 존재 X
+			json = "{\"code\":\"success\", \"desc\":\"사용가능한 아이디입니다.\"}";
+		}
+		return json;
+	}
+	
+	@RequestMapping("/security/checkNick" )
+	public @ResponseBody String checkNick(HttpServletRequest request) {
+		String nickName = request.getParameter("nickName");
+		System.out.println("nickname="+nickName);
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("item1", nickName);
+		
+		System.out.println(map);
+		
+		int nResult = svc.checkNick(map);
+		
+		System.out.println("["+nResult+"]");
+		
+		String json = "";
+		
+		if(nResult != 0) {//결과 값이 있으면 아이디 존재	
+			json = "{\"code\":\"fail\", \"desc\":\"해당 닉네임이 이미 존재합니다.\"}";
+		} else {		//없으면 아이디 존재 X
+			json = "{\"code\":\"success\", \"desc\":\"사용가능한 닉네임입니다.\"}";
+		}
+		return json;
+	}
+	
 	
 	@RequestMapping("/loginForm")
 	public String loginFrom() {

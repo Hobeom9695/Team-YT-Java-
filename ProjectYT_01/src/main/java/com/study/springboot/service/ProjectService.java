@@ -24,11 +24,25 @@ public class ProjectService implements ItProjectService {
 //	public UserDto view(String id) {
 //		return dao.viewDao(id);
 //	}
-
+	
 	@Override
 	public int join(Map<String, String> map) {
 		
 		int nResult = dao.join(map);
+		return nResult;
+	}
+	
+	@Override
+	public int checkid(Map<String, String> map) {
+		
+		int nResult = dao.checkid(map);
+		return nResult;
+	}
+	
+	@Override
+	public int checkNick(Map<String, String> map) {
+		
+		int nResult = dao.checkNick(map);
 		return nResult;
 	}
 

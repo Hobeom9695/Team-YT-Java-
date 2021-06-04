@@ -5,8 +5,12 @@
 	
 <mapper namespace="com.study.springboot.dao.ItUserDao">
 
-	<select id="userListDao" resultType="com.study.springboot.dto.UserDto">
-		select * from simple_bbs order by id desc
+	<select id="checkid" parameterType="java.util.HashMap" resultType="_int">
+		select count(id) from user_yt where id = #{item1}
+	</select>
+	
+	<select id="checkNick" parameterType="java.util.HashMap" resultType="_int">
+		select count(nickname) from user_yt where nickname = #{item1}
 	</select>
 	
 	<select id="userViewDao" resultType="com.study.springboot.dto.UserDto">
@@ -17,7 +21,7 @@
 		insert into user_yt (user_num, id, password, user_name,
                      		 user_telnum, nickname, email, company, authority, enabled)
 			values (user_yt_seq.nextval, #{item1}, #{item2}, #{item3},
-					#{item4}, #{item5}, #{item6}, #{item7}, 'normal', 1)
+					#{item4}, #{item5}, #{item6}, #{item7}, 'ROLE_NOMAL', 1)
 	</insert>
 	
 	<delete id="userDeleteDao">

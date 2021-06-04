@@ -13,6 +13,8 @@ public interface ItUserDao {
 	public List<UserDto> userList();
 	public UserDto userView(String id);
 	public int join(Map<String, String> map);
+	public int checkid(Map<String, String> map);
+	public int checkNick(Map<String, String> map);
 	public int deleteUser(@Param("_id")String id);
 	public int articleCount();
 	public int modifyUser(Map<String, String>map);

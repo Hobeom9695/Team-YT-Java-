@@ -17,51 +17,51 @@
 <script src="http://code.jquery.com/jquery.js"></script>
 <script>
 function form_check() {
-	if($('#userid').val().length == 0) {
+	if($('#userId').val().length == 0) {
 		alert("아이디를 입력해주세요.");
-		$('#userid').focus();
+		$('#userId').focus();
 		return;
 	}
 	
-	if($('#userid').val().length < 6) {
+	if($('#userId').val().length < 6) {
 		alert("아이디는 6글자 이상이어야 합니다.");
-		$('#userid').focus();
+		$('#userId').focus();
 		return;
 	}
 	
-	if($('#password').val().length == 0) {
+	if($('#userPwd').val().length == 0) {
 		alert("비밀번호를 입력해주세요.");
-		$('#password').focus();
+		$('#userPwd').focus();
 		return;
 	}
 	
-	if($('#password').val().length < 8) {
+	if($('#userPwd').val().length < 8) {
 		alert("비밀번호는 8자리 이상이어야 합니다.");
-		$('#password').focus();
+		$('#userPwd').focus();
 		return;
 	}
 	
-	if($('#password').val() != $('#password_check').val()) {
+	if($('#userPwd').val() != $('#password_check').val()) {
 		alert("비밀번호가 일치하지 않습니다.");
-		$('#password').focus();
+		$('#userPwd').focus();
 		return;
 	}
 	
-	if($('#user_name').val().length == 0) {
+	if($('#userName').val().length == 0) {
 		alert("이름을 입력해주세요.");
-		$('#user_name').focus();
+		$('#userName').focus();
 		return;
 	}
 	
-	if($('#nickname').val().length == 0) {
+	if($('#nickName').val().length == 0) {
 		alert("닉네임(별명)을 입력해주세요.");
-		$('#nickname').focus();
+		$('#nickName').focus();
 		return;
 	}
 	
-	if($('#nickname').val().length < 3) {
+	if($('#nickName').val().length < 3) {
 		alert("닉네임(별명)은 3글자 이상이어야 합니다.");
-		$('#nickname').focus();
+		$('#nickName').focus();
 		return;
 	}
 	
@@ -77,7 +77,7 @@ function form_check() {
 		return;
 	}
 	
-	if($('#user_telNum').val().length == 0) {
+	if($('#userTelNum').val().length == 0) {
 		alert("전화번호를 입력해주세요.");
 		$('#user_telNum').focus();
 		return;
@@ -85,10 +85,49 @@ function form_check() {
 	submit_ajax();
 }
 
+function check_id() {
+	var id = "userId="+$('#userId').val();
+	$.ajax({
+		url: '/security/checkId',
+		type: 'POST',
+		data: id,
+		dataType: 'text',
+		success: function(json) {
+			var result = JSON.parse(json);
+			if(result.code=="success") {
+				alert(result.desc);
+			} else {
+				alert(result.desc);
+			}
+		}
+	});
+}
+
+function check_nick() {
+	var nickName = "nickName="+$('#nickName').val();
+	$.ajax({
+		url: '/security/checkNick',
+		type: 'POST',
+		data: nickName,
+		dataType: 'text',
+		success: function(json) {
+			var result = JSON.parse(json);
+			if(result.code=="success") {
+				alert(result.desc);
+			} else {
+				alert(result.desc);
+			}
+		}
+	});
+}
+
 function submit_ajax() {
+	<%
+		String conPath = request.getContextPath();
+	%>
 	var queryString = $("#reg_frm").serialize();
 	$.ajax({
-		url: '/security/join',
+		url: '<%=conPath%>/security/join',
 		type: 'POST',
 		data: queryString,
 		dataType: 'text',
@@ -158,13 +197,13 @@ function submit_ajax() {
 			<form class="form-inline my-2 my-lg-0">
 				<input class="form-control mr-sm-2" type="search"
 					placeholder="Search" aria-label="Search">
-				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>&nbsp;
 			</form>
 		</div>
 		<div>
 			<tr>
 				<td class="button">
-					<button type="button" class="btn btn-secondary btn-lg" onclick="">로그인</button>
+					<button type="button" class="btn btn-secondary" onclick="javascript:window.location='/loginForm'">로그인</button>
 				</td>
 			</tr>
 		</div>
@@ -202,12 +241,12 @@ function submit_ajax() {
 			<form id="reg_frm" name="reg_frm">
 				<div class="input-group mb-3">
   					<span class="input-group-text col-2" id="basic-addon1">아이디</span>
-					<input type="text" class="form-control" id="userid" name="userid" placeholder="* 6자리 이상" aria-label="아이디" aria-describedby="basic-addon1">&nbsp;
-					<input type="button" class="btn btn-dark" value="아이디 중복확인" onclick="id_check()">
+					<input type="text" class="form-control" id="userId" name="userId" placeholder="* 6자리 이상" aria-label="아이디" aria-describedby="basic-addon1">&nbsp;
+					<button type="button" id="btn_checkid" class="btn btn-dark" onclick="check_id()">아이디 중복확인</button>
 				</div>
 				<div class="input-group mb-3">
   					<span class="input-group-text col-2" id="basic-addon1">비밀번호</span>
-  					<input type="password" class="form-control" id="password" name="password" placeholder="* 8자리 이상" aria-label="비밀번호" aria-describedby="basic-addon1">
+  					<input type="password" class="form-control" id="userPwd" name="userPwd" placeholder="* 8자리 이상" aria-label="비밀번호" aria-describedby="basic-addon1">
 				</div>
 				<div class="input-group mb-3">
   					<span class="input-group-text col-2" id="basic-addon1">비밀번호 확인</span>
@@ -215,16 +254,16 @@ function submit_ajax() {
 				</div>
 				<div class="input-group mb-3">
   					<span class="input-group-text col-2" id="basic-addon1">이름</span>
-  					<input type="text" class="form-control" id="user_name" name="user_name"  aria-label="이름" aria-describedby="basic-addon1">
+  					<input type="text" class="form-control" id="userName" name="userName"  aria-label="이름" aria-describedby="basic-addon1">
 				</div>
 				<div class="input-group mb-3">
   					<span class="input-group-text col-2" id="basic-addon1">휴대폰</span>
-  					<input type="text" class="form-control" id="user_telNum" name="user_telNum" aria-label="휴대폰" aria-describedby="basic-addon1">
+  					<input type="text" class="form-control" id="userTelNum" name="userTelNum" aria-label="휴대폰" aria-describedby="basic-addon1">
 				</div>
 				<div class="input-group mb-3">
   					<span class="input-group-text col-2" id="basic-addon1">닉네임</span>
-  					<input type="text" class="form-control" id="nickname" name="nickname" placeholder="* 3자리 이상" aria-label="닉네임" aria-describedby="basic-addon1">
-  					<input type="button" class="btn btn-dark" value="닉네임 중복확인" onclick="nickname_check()">
+  					<input type="text" class="form-control" id="nickName" name="nickName" placeholder="* 3자리 이상" aria-label="닉네임" aria-describedby="basic-addon1">&nbsp;
+  					<button type="button" class="btn btn-dark" onclick="check_nick()">닉네임 중복확인</button>
 				</div>
 				<div class="input-group mb-3">
 					<span class="input-group-text col-2" id="basic-addon1">이메일</span>

@@ -26,10 +26,10 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 		
 		if (exception instanceof BadCredentialsException) {
 			loginFailureCount(loginid);
-			errormsg = "아이디나 비밀번호가 맞지 않습니다. 다시 확인해주세요.";
+			errormsg = "아이디 또는 비밀번호가 맞지 않습니다. 다시 확인해주세요.";
 		} else if (exception instanceof InternalAuthenticationServiceException) {
 			loginFailureCount(loginid);
-			errormsg = "아이디나 비밀번호가 맞지 않습니다. 다시 확인해주세요.";
+			errormsg = "아이디 또는 비밀번호가 맞지 않습니다. 다시 확인해주세요.";
 		} else if (exception instanceof DisabledException) {
 			errormsg = "계정이 비활성화되었습니다. 관리자에게 문의하세요.";
 		} else if (exception instanceof CredentialsExpiredException) {
