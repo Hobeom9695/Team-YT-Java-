@@ -45,6 +45,21 @@ public class ProjectService implements ItProjectService {
 		int nResult = dao.checkNick(map);
 		return nResult;
 	}
+	
+	@Override
+	public int checkSns(Map<String, String> map) {
+		
+		int nResult = dao.checkSns(map);
+		return nResult;
+	}
+	
+	@Override
+	public int signUpSns(Map<String, String> map) {
+		
+		int nResult = dao.signUpSns(map);
+		return nResult;
+	}
+	
 
 //	@Override
 //	public int deleteUser(String id) {

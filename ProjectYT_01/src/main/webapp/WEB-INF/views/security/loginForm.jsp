@@ -1,3 +1,6 @@
+<%@ page import="java.net.URLEncoder" %>
+<%@ page import="java.security.SecureRandom" %>
+<%@ page import="java.math.BigInteger" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -16,6 +19,7 @@
 	integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
 	crossorigin="anonymous"></script>
 <script src="http://code.jquery.com/jquery.js"></script>
+
 <script>
 function form_check() { alert("111")
 	if($('#j_username').val().length == 0) {
@@ -93,7 +97,7 @@ function submit_ajax() {
 			aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-		<a class="navbar-brand" href="#">YT</a>
+		<a class="navbar-brand" href="/">YT</a>
 
 		<div class="collapse navbar-collapse" id="navbarTogglerDemo03">
 			<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
@@ -178,6 +182,20 @@ function submit_ajax() {
 					<a href="/security/joinForm" class="font3">회원가입</a>&nbsp;&nbsp;
 					<a href="" class="font3">고객센터</a>
 					</p>
+				</div>
+				<div>
+					<%
+   						String clientId = "nior9v26kcvpaRLlFZCi";//애플리케이션 클라이언트 아이디값";
+    					String redirectURI = URLEncoder.encode("http://localhost:8081/security/signup_sns", "UTF-8");
+    					SecureRandom random = new SecureRandom();
+    					String state = new BigInteger(130, random).toString();
+    					String apiURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
+    					apiURL += "&client_id=" + clientId;
+    					apiURL += "&redirect_uri=" + redirectURI;
+    					apiURL += "&state=" + state;
+    					session.setAttribute("state", state);
+ 					%>
+  					<a href="<%=apiURL%>"><img height="50" src="http://static.nid.naver.com/oauth/small_g_in.PNG"/></a>
 				</div>
 			</form>
 		</div>

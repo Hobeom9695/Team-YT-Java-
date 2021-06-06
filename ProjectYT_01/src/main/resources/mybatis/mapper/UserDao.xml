@@ -13,6 +13,10 @@
 		select count(nickname) from user_yt where nickname = #{item1}
 	</select>
 	
+	<select id="checkSns" parameterType="java.util.HashMap" resultType="_int">
+		select count(sns_id) from sns_info where sns_id = #{item1}
+	</select>
+	
 	<select id="userViewDao" resultType="com.study.springboot.dto.UserDto">
 		select * from simple_bbs where id = #{0}
 	</select>
@@ -22,6 +26,12 @@
                      		 user_telnum, nickname, email, company, authority, enabled)
 			values (user_yt_seq.nextval, #{item1}, #{item2}, #{item3},
 					#{item4}, #{item5}, #{item6}, #{item7}, 'ROLE_NOMAL', 1)
+	</insert>
+	
+	<insert id="signUpSns" parameterType="java.util.HashMap">
+		insert into sns_info (user_num, sns_id, sns_type, sns_name, email, authority, enabled)
+			values (user_yt_seq.nextval, #{item1}, 'NAVER', #{item2}, #{item3},
+					'ROLE_NOMAL', 1)
 	</insert>
 	
 	<delete id="userDeleteDao">
