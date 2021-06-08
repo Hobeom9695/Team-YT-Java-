@@ -1,5 +1,6 @@
 package com.study.springboot.auth;
 
+import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
 	public AuthenticationFailureHandler authenticationFailureHandler;
-	
+//	private HttpSession session;
+//	String id = (String)session.getAttribute("id");
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
@@ -34,10 +36,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 			.loginPage("/loginForm")			// default : /login
 			.loginProcessingUrl("/j_spring_security_check")
 //			.failureUrl("/loginForm?error")			// default : /login?error
-//			.defaultSuccessUrl("/")
+			.defaultSuccessUrl("/member/main2")
 			.failureHandler(authenticationFailureHandler)
 			.usernameParameter("j_username")	// default : j_username
 			.passwordParameter("j_password")	// default : j_password
+//			.usernameParameter(id)
 			.permitAll();
 		
 		http.logout()

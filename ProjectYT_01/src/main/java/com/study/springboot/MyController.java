@@ -5,14 +5,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.json.simple.JSONObject;
@@ -162,10 +165,33 @@ public class MyController {
 	public String loginFrom() {
 		return "security/loginForm";
 	}
+	
+	@RequestMapping("/security/login_naver")
+	public @ResponseBody String login_naver(HttpServletRequest request) throws UnsupportedEncodingException {
+		System.out.println("login_naver");
+		HttpSession session = request.getSession();
+		
+		String clientId = "nior9v26kcvpaRLlFZCi";//애플리케이션 클라이언트 아이디값";
+    	String redirectURI = URLEncoder.encode("http://localhost:8081/security/signup_sns", "UTF-8");
+    	SecureRandom random = new SecureRandom();
+    	String state = new BigInteger(130, random).toString();
+    	String apiURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
+    	apiURL += "&client_id=" + clientId;
+   		apiURL += "&redirect_uri=" + redirectURI;
+    	apiURL += "&state=" + state;
+    	session.setAttribute("state", state);
+    	
+    	System.out.println(session.toString());
+    	
+    	System.out.println(apiURL.toString());
+    	
+    	return "/security/signup_sns";
+	}
 
 	@RequestMapping("/security/signup_sns")
 	public @ResponseBody String signup_sns(HttpServletRequest request) throws UnsupportedEncodingException {
 		String json = "";
+		String page = "";
 		
 		String clientId = "nior9v26kcvpaRLlFZCi";// 애플리케이션 클라이언트 아이디값";
 		String clientSecret = "UGgrKaA_LQ";// 애플리케이션 클라이언트 시크릿값";
@@ -235,27 +261,30 @@ public class MyController {
 				map.put("item2", snsName);
 				map.put("item3", eMail);
 				System.out.println(map);
-				int nResult = svc.checkSns(map);
+				int nResult = svc.checkid(map);
 				System.out.println("check="+nResult);
 
 				if (nResult != 0) {// 결과 값이 있으면 아이디 존재
 					json = "{\"code\":\"success\"}";
+					page = "member/main2";
 				} else { // 없으면 아이디 존재 X
 					nResult = svc.signUpSns(map);
 					System.out.println("signUp = "+nResult);
 					if (nResult == 1) {
-						json = "{\"code\":\"success\", \"desc\":\"회원가입을 완료하였습니다.\"}";
+						json = "{\"code\":\"signup\", \"desc\":\"회원가입을 완료하였습니다.\"}";
+						page = "security/set_nickname";
 					} else {
 						json = "{\"code\":\"fail\", \"desc\":\"에러가 발생하여 회원가입에 실패했습니다.\"}";
+						page = "redirect:loginForm";
 					}
 				}
-				return json;	
+				return "member/main2";	
 			}
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 
-		return json;
+		return "member/main2";
 	}
 	
 	private static String get(String apiUrl, Map<String, String> requestHeaders){

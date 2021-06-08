@@ -17,6 +17,19 @@
 	integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
 	crossorigin="anonymous"></script>
 <script src="http://code.jquery.com/jquery.js"></script>
+
+<script>
+window.addEventListener('load', function () {
+	naverLogin.getLoginStatus(function (status) {
+		if (status) {
+			/* (6) 로그인 상태가 "true" 인 경우 로그인 버튼을 없애고
+			   사용자 정보를 출력합니다. */
+			setLoginStatus();
+		}
+	});
+});
+</script>
+
 <style>
 .font {
 	font-color: white;
@@ -83,7 +96,7 @@
 		<div class="visible font3">
 			<sec:authentication property="name"/>&nbsp;
 			<c:url value="/logout" var="logoutUrl" />
-			<a href="${logoutUrl}" type="button" class="btn btn-secondary">로그아웃</a><br>&nbsp;
+			<a href="${logoutUrl}" type="button" class="btn btn-secondary">로그아웃</a>&nbsp;
 		</div>
 		<div class="invisible">
 			<tr>

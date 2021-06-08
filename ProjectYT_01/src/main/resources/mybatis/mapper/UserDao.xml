@@ -25,13 +25,13 @@
 		insert into user_yt (user_num, id, password, user_name,
                      		 user_telnum, nickname, email, company, authority, enabled)
 			values (user_yt_seq.nextval, #{item1}, #{item2}, #{item3},
-					#{item4}, #{item5}, #{item6}, #{item7}, 'ROLE_NOMAL', 1)
+					#{item4}, #{item5}, #{item6}, #{item7}, 'ROLE_NORMAL', 1)
 	</insert>
 	
 	<insert id="signUpSns" parameterType="java.util.HashMap">
-		insert into sns_info (user_num, sns_id, sns_type, sns_name, email, authority, enabled)
+		insert into user_yt (user_num, id, sns_type, user_name, email, authority, enabled)
 			values (user_yt_seq.nextval, #{item1}, 'NAVER', #{item2}, #{item3},
-					'ROLE_NOMAL', 1)
+					'ROLE_NORMAL', 1)
 	</insert>
 	
 	<delete id="userDeleteDao">

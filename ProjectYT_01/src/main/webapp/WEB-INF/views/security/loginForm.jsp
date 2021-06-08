@@ -4,6 +4,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%
+   	String clientId = "nior9v26kcvpaRLlFZCi";//애플리케이션 클라이언트 아이디값";
+    String redirectURI = URLEncoder.encode("http://localhost:8081/security/signup_sns", "UTF-8");
+    SecureRandom random = new SecureRandom();
+    String state = new BigInteger(130, random).toString();
+    String apiURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
+    apiURL += "&client_id=" + clientId;
+   	apiURL += "&redirect_uri=" + redirectURI;
+    apiURL += "&state=" + state;
+    session.setAttribute("state", state);
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -57,6 +68,27 @@ function submit_ajax() {
 			}
 		}
 	});
+}
+
+</script>
+<script>
+function naverlogin() { alert('aaaa');
+$.ajax({
+	url: '/security/login_naver',
+	type: 'POST',
+	success: function(json) {
+		var result = JSON.parse(json);
+		if(result.code=="success") {
+			alert(result.desc)
+			window.location.replace("/member/main2");
+		} else if(result.code=="signup") {
+			alert(result.desc);
+			window.location.replace("/security/set_nickname");
+		} else {
+			alert(result.desc);
+		}
+	}
+});
 }
 </script>
 <style>
@@ -183,21 +215,14 @@ function submit_ajax() {
 					<a href="" class="font3">고객센터</a>
 					</p>
 				</div>
-				<div>
-					<%
-   						String clientId = "nior9v26kcvpaRLlFZCi";//애플리케이션 클라이언트 아이디값";
-    					String redirectURI = URLEncoder.encode("http://localhost:8081/security/signup_sns", "UTF-8");
-    					SecureRandom random = new SecureRandom();
-    					String state = new BigInteger(130, random).toString();
-    					String apiURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
-    					apiURL += "&client_id=" + clientId;
-    					apiURL += "&redirect_uri=" + redirectURI;
-    					apiURL += "&state=" + state;
-    					session.setAttribute("state", state);
- 					%>
-  					<a href="<%=apiURL%>"><img height="50" src="http://static.nid.naver.com/oauth/small_g_in.PNG"/></a>
-				</div>
 			</form>
+			<div>
+				
+ 					<button type="button" onclick="naverlogin()" >NAVER</button>
+ 					<input type="button" value="naver" onclick="naverlogin()">
+  					<a href="<%=apiURL%>"><img height="50" src="http://static.nid.naver.com/oauth/small_g_in.PNG"/></a>
+  				
+			</div>
 		</div>
 	</div>
 
