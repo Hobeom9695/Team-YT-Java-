@@ -167,7 +167,7 @@ public class MyController {
 	}
 	
 	@RequestMapping("/security/login_naver")
-	public @ResponseBody String login_naver(HttpServletRequest request) throws UnsupportedEncodingException {
+	public String login_naver(HttpServletRequest request) throws UnsupportedEncodingException {
 		System.out.println("login_naver");
 		HttpSession session = request.getSession();
 		
@@ -185,11 +185,11 @@ public class MyController {
     	
     	System.out.println(apiURL.toString());
     	
-    	return "/security/signup_sns";
+    	return apiURL;
 	}
 
 	@RequestMapping("/security/signup_sns")
-	public @ResponseBody String signup_sns(HttpServletRequest request) throws UnsupportedEncodingException {
+	public String signup_sns(HttpServletRequest request) throws UnsupportedEncodingException {
 		String json = "";
 		String page = "";
 		
@@ -278,13 +278,13 @@ public class MyController {
 						page = "redirect:loginForm";
 					}
 				}
-				return "member/main2";	
+				return page;
 			}
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 
-		return "member/main2";
+		return page;
 	}
 	
 	private static String get(String apiUrl, Map<String, String> requestHeaders){

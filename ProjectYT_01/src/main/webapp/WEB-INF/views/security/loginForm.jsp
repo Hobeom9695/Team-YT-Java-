@@ -217,11 +217,7 @@ $.ajax({
 				</div>
 			</form>
 			<div>
-				
- 					<button type="button" onclick="naverlogin()" >NAVER</button>
- 					<input type="button" value="naver" onclick="naverlogin()">
-  					<a href="<%=apiURL%>"><img height="50" src="http://static.nid.naver.com/oauth/small_g_in.PNG"/></a>
-  				
+  				<a href="<%=apiURL%>"><img height="80" class="btn col" src="img/NaverLogin.png"/></a>
 			</div>
 		</div>
 	</div>
