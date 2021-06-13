@@ -76,7 +76,7 @@ window.addEventListener('load', function () {
 				<li class="nav-item active"><a class="nav-link" href="main.jsp">Home
 						<span class="sr-only">(current)</span>
 				</a></li>
-				<li class="nav-item active"><a class="nav-link" href="#">공지사항</a>
+				<li class="nav-item active"><a class="nav-link" href="/notice">공지사항</a>
 				</li>
 				<li class="nav-item active"><a class="nav-link" href="#">인플루언서</a>
 				</li>
@@ -137,10 +137,10 @@ window.addEventListener('load', function () {
 		
 		<div class="d-flex justify-content-center">
 			<div class="border border-3">
-				<img src="img/Youtube_logo.png" alt="logo"><a href=""></a>
+				<img src="/img/Youtube_logo.png" alt="logo"><a href=""></a>
 			</div>&nbsp;&nbsp;&nbsp;
 			<div class="border border-3">
-				<img src="img/Twitch_logo.png" alt="logo"><a href=""></a>
+				<img src="/img/Twitch_logo.png" alt="logo"><a href=""></a>
 			</div>
 		</div>
 		

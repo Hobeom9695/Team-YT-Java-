@@ -4,6 +4,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <%
    	String clientId = "nior9v26kcvpaRLlFZCi";//애플리케이션 클라이언트 아이디값";
     String redirectURI = URLEncoder.encode("http://localhost:8081/security/signup_sns", "UTF-8");
@@ -31,66 +32,6 @@
 	crossorigin="anonymous"></script>
 <script src="http://code.jquery.com/jquery.js"></script>
 
-<script>
-function form_check() { alert("111")
-	if($('#j_username').val().length == 0) {
-		alert("아이디를 입력해주세요.");
-		$('#j_username').focus();
-		return;
-	}
-	
-	if($('#j_password').val().length == 0) {
-		alert("비밀번호를 입력해주세요.");
-		$('#j_password').focus();
-		return;
-	}
-	
-	submit_ajax();
-}
-
-function submit_ajax() {
-	<%
-		String conPath = request.getContextPath();
-	%>
-	var queryString = $("#reg_frm").serialize();
-	$.ajax({
-		url: ${loginUrl},
-		type: 'POST',
-		data: queryString,
-		dataType: 'text',
-		success: function(json) {
-			var result = JSON.parse(json);
-			if(result.code=="success") {
-				alert(result.desc)
-				window.location.replace("/member/main2");
-			} else {
-				alert(result.desc);
-			}
-		}
-	});
-}
-
-</script>
-<script>
-function naverlogin() { alert('aaaa');
-$.ajax({
-	url: '/security/login_naver',
-	type: 'POST',
-	success: function(json) {
-		var result = JSON.parse(json);
-		if(result.code=="success") {
-			alert(result.desc)
-			window.location.replace("/member/main2");
-		} else if(result.code=="signup") {
-			alert(result.desc);
-			window.location.replace("/security/set_nickname");
-		} else {
-			alert(result.desc);
-		}
-	}
-});
-}
-</script>
 <style>
 .font {
 	font-color: white;
@@ -190,7 +131,7 @@ $.ajax({
 	
 		<hr>
 	
-		<div class="container col-6">
+		<div class="container col-7">
 			<c:url value="j_spring_security_check" var="loginUrl"/>
 			<form action="${loginUrl}" method="post">
 				<c:if test="${param.error != null}">
@@ -217,7 +158,7 @@ $.ajax({
 				</div>
 			</form>
 			<div>
-  				<a href="<%=apiURL%>"><img height="80" class="btn col" src="img/NaverLogin.png"/></a>
+  				<a href="<%=apiURL%>"><img height="80" class="col" src="img/NaverLogin.png"/></a>
 			</div>
 		</div>
 	</div>

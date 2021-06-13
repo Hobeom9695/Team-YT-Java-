@@ -5,6 +5,10 @@
 	
 <mapper namespace="com.study.springboot.dao.ItUserDao">
 
+	<select id="userSelect" resultType="com.study.springboot.dto.UserDto">
+		select nickname from user_yt where id = #{0}
+	</select>
+
 	<select id="checkid" parameterType="java.util.HashMap" resultType="_int">
 		select count(id) from user_yt where id = #{item1}
 	</select>

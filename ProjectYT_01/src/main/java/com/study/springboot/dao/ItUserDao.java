@@ -3,11 +3,14 @@ package com.study.springboot.dao;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.ui.Model;
+
+import com.study.springboot.dto.UserDto;
 
 @Mapper
 public interface ItUserDao {
 //	public List<UserDto> userList();
-//	public UserDto userView(String id);
+	public UserDto userSelect(String uId);
 	public int join(Map<String, String> map);
 	public int checkid(Map<String, String> map);
 	public int checkNick(Map<String, String> map);

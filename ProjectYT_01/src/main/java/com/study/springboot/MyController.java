@@ -21,6 +21,9 @@ import javax.validation.Valid;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,12 +32,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.study.springboot.dto.NoticeDto;
 import com.study.springboot.dto.UserDto;
 import com.study.springboot.service.ItProjectService;
 
 @Controller
 public class MyController {
-
+	
 	@Autowired
 	ItProjectService svc;
 
@@ -165,6 +169,22 @@ public class MyController {
 	public String loginFrom() {
 		return "security/loginForm";
 	}
+	
+//	@RequestMapping("/j_spring_security_check")
+//	public String securityCheck(HttpServletRequest request) throws UnsupportedEncodingException {
+//		
+//		request.setCharacterEncoding("UTF-8");
+//		String j_username = request.getParameter("j_username");
+//		String j_password = request.getParameter("j_password");
+//		System.out.println(j_username);
+//		HttpSession session = request.getSession();
+//		if(j_username != null && j_password !=null) {
+//			session.setAttribute("j_username", j_username);
+//			session.setAttribute("j_password", j_password);
+//		}
+//		
+//		return "j_spring_security_check";
+//	}
 	
 	@RequestMapping("/security/login_naver")
 	public String login_naver(HttpServletRequest request) throws UnsupportedEncodingException {
@@ -341,9 +361,97 @@ public class MyController {
             throw new RuntimeException("API 응답을 읽는데 실패했습니다.", e);
         }
     }
+    
+    @RequestMapping("/notice")
+	public String userNoticeList(Model model) {
+		model.addAttribute("noticeList", svc.noticeList());
+		
+		int nTotalCount = svc.noticeCount();
+		System.out.println("Count : " + nTotalCount);
+		return "/guest/notice";
+	}
+    
+    @RequestMapping("/admin/notice")
+	public String adminNoticeList(Model model) {
+		model.addAttribute("noticeList", svc.noticeList());
+		
+		int nTotalCount = svc.noticeCount();
+		System.out.println("Count : " + nTotalCount);
+		return "admin/notice";
+	}
+    
+    @RequestMapping("/admin/noticeForm")
+	public String noticeForm(HttpServletRequest request, Model model, String uId) {
+    	
+    	uId = userInfo(null);
+//    	System.out.println(uId.toString());
+    	
+    	UserDto uDto = svc.userSelect(uId);
+    	System.out.println("nickname = " + uDto.getNickName().toString());
+    	
+    	model.addAttribute("nickname", uDto.getNickName());
+    	
+		return "admin/noticeForm";
+	}
+    
+    public String userInfo(@AuthenticationPrincipal User user) {
+    	String uId = (SecurityContextHolder.getContext().getAuthentication().getName().toString());
+//    	System.out.println(uId.toString());
+		return uId;
+    }
+    
+    @RequestMapping("/admin/noticeWrite")
+	public @ResponseBody String noticeWrite(HttpServletRequest request, Model model,
+			@ModelAttribute("dto") @Valid NoticeDto nDto, BindingResult result)
+    {
+    	String page = "admin/noticeForm";
+
+		if (result.hasErrors()) {
+			System.out.println("getAllErrors : " + result.getAllErrors());
+
+			if (result.getFieldError("userId") != null) {
+				System.out.println("1:" + result.getFieldError("writer").getCode());
+			}
+			if (result.getFieldError("userPwd") != null) {
+				System.out.println("2:" + result.getFieldError("title").getCode());
+			}
+			if (result.getFieldError("userName") != null) {
+				System.out.println("3:" + result.getFieldError("contentText").getCode());
+			}
+
+			return page;
+		}
+
+		nDto.setWriter(request.getParameter("writer"));
+		nDto.setTitle(request.getParameter("title"));
+		nDto.setContentText(request.getParameter("contentText"));
+
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("item1", nDto.getWriter());
+		map.put("item2", nDto.getTitle());
+		map.put("item3", nDto.getContentText());
+
+		int nResult = svc.noticeWrite(map);
+		System.out.println("noticeWrite : " + nResult);
+
+		String json = "";
+		if (nResult == 1) {
+			json = "{\"code\":\"success\", \"desc\":\"작성을 완료하였습니다.\"}";
+		} else {
+			json = "{\"code\":\"fail\", \"desc\":\"에러가 발생하여 작성에 실패했습니다.\"}";
+		}
+
+		return json;
+	}
+    
 	@RequestMapping("/member/main2")
 	public String main2() {
 		return "member/main2";
+	}
+	
+	@RequestMapping("/admin/main")
+	public String main3() {
+		return "admin/main3";
 	}
 
 //	@RequestMapping("/delete")

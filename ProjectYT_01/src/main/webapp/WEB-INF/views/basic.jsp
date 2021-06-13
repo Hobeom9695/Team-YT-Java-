@@ -1,3 +1,4 @@
+
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -52,7 +53,7 @@
 		<div class="collapse navbar-collapse" id="navbarTogglerDemo03">
 			<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 				<li class="nav-item active"><a class="nav-link" href="main.jsp">Home
-						<span class="sr-only">(current)</span>
+						<span class="sr-only">(current)</span>                 
 				</a></li>
 				<li class="nav-item active"><a class="nav-link" href="#">공지사항</a>
 				</li>
@@ -74,7 +75,7 @@
 		<div>
 			<tr>
 				<td class="button">
-					<button type="button" class="btn btn-secondary btn-lg" onclick="">로그인</button>
+					<button type="button" class="btn btn-secondary btn-lg" onclick="javascript:window.location='/loginForm'">로그인</button>
 				</td>
 			</tr>
 		</div>
