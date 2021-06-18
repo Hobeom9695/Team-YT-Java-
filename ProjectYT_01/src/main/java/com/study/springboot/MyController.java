@@ -1,9 +1,12 @@
 package com.study.springboot;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
@@ -15,11 +18,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,6 +33,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ResourceUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -169,22 +176,6 @@ public class MyController {
 	public String loginFrom() {
 		return "security/loginForm";
 	}
-	
-//	@RequestMapping("/j_spring_security_check")
-//	public String securityCheck(HttpServletRequest request) throws UnsupportedEncodingException {
-//		
-//		request.setCharacterEncoding("UTF-8");
-//		String j_username = request.getParameter("j_username");
-//		String j_password = request.getParameter("j_password");
-//		System.out.println(j_username);
-//		HttpSession session = request.getSession();
-//		if(j_username != null && j_password !=null) {
-//			session.setAttribute("j_username", j_username);
-//			session.setAttribute("j_password", j_password);
-//		}
-//		
-//		return "j_spring_security_check";
-//	}
 	
 	@RequestMapping("/security/login_naver")
 	public String login_naver(HttpServletRequest request) throws UnsupportedEncodingException {
@@ -368,7 +359,7 @@ public class MyController {
 		
 		int nTotalCount = svc.noticeCount();
 		System.out.println("Count : " + nTotalCount);
-		return "/guest/notice";
+		return "/guest/notice1";
 	}
     
     @RequestMapping("/admin/notice")
@@ -377,7 +368,7 @@ public class MyController {
 		
 		int nTotalCount = svc.noticeCount();
 		System.out.println("Count : " + nTotalCount);
-		return "admin/notice";
+		return "admin/notice3";
 	}
     
     @RequestMapping("/admin/noticeForm")
@@ -400,6 +391,54 @@ public class MyController {
 		return uId;
     }
     
+    @RequestMapping("/fileUpload")
+    public String imgUpload(HttpServletRequest request, HttpServletResponse response) {
+    	
+    	String fileInfo = "";
+    	String oriFileName = "";
+//    	String fileName = "";
+    	String fileName = request.getHeader("file-name");
+//    	System.out.println("filename = " + fileName);
+//    	System.out.println("filesize = " + size);
+    	JSONObject obj = new JSONObject();
+    	
+    	try {
+    		String path = ResourceUtils
+					.getFile("classpath:static/upload/").toPath().toString();
+//    		System.out.println(path);
+    		
+    		oriFileName = fileName;
+    		String reFileName = path + "/" + oriFileName;
+    		System.out.println("1."+reFileName);
+    		
+    		InputStream input = request.getInputStream();
+    		OutputStream output = new FileOutputStream(reFileName);
+    		int numRead;
+    		byte b[] = new byte[Integer.parseInt(request.getHeader("file-size"))];
+    		while((numRead = input.read(b,0,b.length)) != -1) {
+    			output.write(b,0,numRead);
+    		}
+    		if(input != null) {
+    			input.close();
+    		}
+    		System.out.println("2."+path);
+    		output.flush();
+    		output.close();
+    		
+    		fileInfo += "&bNewLine=true";
+    		fileInfo += "&sFileName="+fileName;
+    		fileInfo += "&sFileURL="+"/upload/"+oriFileName;
+    		System.out.println("fileInfo = "+fileInfo);
+    		PrintWriter out = response.getWriter();
+    		out.print(fileInfo);
+    		out.flush();
+    		out.close(); 
+    		
+    	} catch(Exception e) {
+    	}
+		return "";
+    }
+    
     @RequestMapping("/admin/noticeWrite")
 	public @ResponseBody String noticeWrite(HttpServletRequest request, Model model,
 			@ModelAttribute("dto") @Valid NoticeDto nDto, BindingResult result)
@@ -416,7 +455,7 @@ public class MyController {
 				System.out.println("2:" + result.getFieldError("title").getCode());
 			}
 			if (result.getFieldError("userName") != null) {
-				System.out.println("3:" + result.getFieldError("contentText").getCode());
+				System.out.println("3:" + result.getFieldError("content_text").getCode());
 			}
 
 			return page;
@@ -424,13 +463,14 @@ public class MyController {
 
 		nDto.setWriter(request.getParameter("writer"));
 		nDto.setTitle(request.getParameter("title"));
-		nDto.setContentText(request.getParameter("contentText"));
+		nDto.setContent_text(request.getParameter("content_text"));
 
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("item1", nDto.getWriter());
 		map.put("item2", nDto.getTitle());
-		map.put("item3", nDto.getContentText());
-
+		map.put("item3", nDto.getContent_text());
+		System.out.println(map.toString());
+		
 		int nResult = svc.noticeWrite(map);
 		System.out.println("noticeWrite : " + nResult);
 
@@ -444,6 +484,17 @@ public class MyController {
 		return json;
 	}
     
+    @RequestMapping("/admin/noticeView")
+	public String noticeView(HttpServletRequest request, Model model) {
+    	System.out.println("noticeView");
+		String nId = request.getParameter("id");
+		System.out.println("id="+nId);
+		model.addAttribute("noticeView", svc.noticeView(nId));
+		System.out.println(model.toString());
+		
+		return "admin/notice_view_con";
+	}
+    
 	@RequestMapping("/member/main2")
 	public String main2() {
 		return "member/main2";
@@ -453,6 +504,58 @@ public class MyController {
 	public String main3() {
 		return "admin/main3";
 	}
+	
+	@RequestMapping("/admin/map")
+	public String searchMap() {
+		return "admin/search_map";
+	}
+	
+	@RequestMapping("/search")
+	public @ResponseBody String search(HttpServletRequest request) throws ParseException {
+        String clientId = "oMd64C0j0eZ36VsOiutc"; //애플리케이션 클라이언트 아이디값"
+        String clientSecret = "us5Tf80Enx"; //애플리케이션 클라이언트 시크릿값"
+
+
+        String text = null;
+        try {
+            text = URLEncoder.encode(request.getParameter("search"), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("검색어 인코딩 실패",e);
+        }
+
+
+        String apiURL = "https://openapi.naver.com/v1/search/local?query=" + text;    // json 결과
+        //String apiURL = "https://openapi.naver.com/v1/search/blog.xml?query="+ text; // xml 결과
+
+
+        Map<String, String> requestHeaders = new HashMap<>();
+        requestHeaders.put("X-Naver-Client-Id", clientId);
+        requestHeaders.put("X-Naver-Client-Secret", clientSecret);
+        String responseBody = get(apiURL,requestHeaders);
+        
+        JSONParser parsing = new JSONParser();
+		Object obj = parsing.parse(responseBody.toString());
+		System.out.println(obj.toString());
+		
+		JSONObject jsonObj = (JSONObject) obj;
+		
+		JSONArray items = (JSONArray) jsonObj.get("items");
+		System.out.println(items.toJSONString());
+		
+//		String link = (String)items.get("link");
+		
+		obj = parsing.parse(items.toString());
+		System.out.println(obj.toString());
+		JSONArray jsonArr = (JSONArray) obj;
+		System.out.println(jsonArr.toJSONString());
+		
+//		JSONArray link = (JSONArray) jsonArr.get("link");
+//		
+//		String url = (String) link.toString();
+//		System.out.println("url = " + url);
+		
+		return jsonArr.toJSONString();
+    }
 
 //	@RequestMapping("/delete")
 //	public String delete(HttpServletRequest request, Model model) {

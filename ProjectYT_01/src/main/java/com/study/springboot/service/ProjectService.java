@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import com.study.springboot.dao.ItNoticeDao;
 import com.study.springboot.dao.ItUserDao;
@@ -82,6 +81,11 @@ public class ProjectService implements ItProjectService {
 	public int noticeCount() {
 		int nTotalCount = notice.noticeCount();
 		return nTotalCount;
+	}
+	
+	@Override
+	public NoticeDto noticeView(String id) {
+		return notice.noticeView(id);
 	}
 //	@Override
 //	public int deleteUser(String id) {

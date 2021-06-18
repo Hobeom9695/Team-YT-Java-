@@ -11,7 +11,6 @@ import com.study.springboot.dto.UserDto;
 public interface ItProjectService {
 
 //	public List<UserDto> list();
-//	public UserDto view(String id);
 	public int join(Map<String, String> map);
 	public int checkid(Map<String, String> map);
 	public int checkNick(Map<String, String> map);
@@ -21,6 +20,7 @@ public interface ItProjectService {
 	public int noticeWrite(Map<String, String> map);
 	public List<NoticeDto> noticeList();
 	public int noticeCount();
+	public NoticeDto noticeView(String id);
 //	public int delete(@Param("_id")String id);
 //	public int count();
 }
